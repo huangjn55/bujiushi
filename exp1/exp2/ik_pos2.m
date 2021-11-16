@@ -1,6 +1,5 @@
 function [q0,q1,q2,q3] = ik_pos2(pe,phie,q1_flag,q0_flag)
- pex = pe(1);
-
+pex = pe(1);
 pey = pe(2);
     a_1 = evalin('base','a_1');
     a_2 = evalin('base','a_2');
@@ -39,6 +38,9 @@ if q0_flag == 0
 end
 
 q3 = phie -q0 - q1 - 0;
-
+q0 = q0/pi*180;
+q1 = q1/pi*180;
+q2 = q2/pi*180;
+q3 = q3/pi*180;
 
 end
