@@ -48,3 +48,7 @@ plot(time,out.theta_3.data)
 ylabel('\theta_3')
 
 
+figure;
+subplot(3,1,1)
+plot(time,out.v_ex.data)
+
