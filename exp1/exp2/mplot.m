@@ -49,3 +49,7 @@ ylabel('\dot \theta_3 [m]')
 % ylabel('\theta_3')
 
 
+figure;
+subplot(3,1,1)
+plot(time,out.v_ex.data)
+
