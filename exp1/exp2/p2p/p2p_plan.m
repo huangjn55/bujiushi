@@ -35,18 +35,18 @@ a35_hat = (q3-theta_3_0)/(1-5/2+5/3);
 
 
 
-learnRate_a15 = 2; %初始步长
-learnRate_a25 = 2; 
-learnRate_a35 = 2;
+learnRate_a15 = 1; %初始步长
+learnRate_a25 = 1; 
+learnRate_a35 = 1;
+
+
+theta_1_dot = a15_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
+theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
+theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
+[r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
+G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
 for k = 1:1:20
-    %计算结果
-    
-    theta_1_dot = a15_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
-    theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
-    theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
-    [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-    last_G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
-    
+
     %调整a15_hat
     % Up Search
     a15_hat = a15_hat + learnRate_a15; 
@@ -54,24 +54,36 @@ for k = 1:1:20
     theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-    G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
-    if(G>last_G)
+    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+    while(flag)
+        
+    end
+    if(G_temp>G)
         % Down Search
         a15_hat = a15_hat - 2*learnRate_a15; 
         theta_1_dot = a15_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-        G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) +5*abs(phi_ef-phi_e);
-        
-        if(G>last_G)
+        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) +5*abs(phi_ef-phi_e); 
+        if(G1>last_G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
+            a15_hat = a15_hat+learnRate_a15;  
             learnRate_a15 = learnRate_a15/2;
-            a15_hat = a15_hat+learnRate_a15;          
-        end     
+
+        else
+            %向下搜索有用
+            G = G_temp;
+        end  
+    else
+        %向上搜索有用
+        G = G_temp;
+
     end
     
-        
+    
+    
+
     %调整a25_hat
     % Up Search
     a25_hat = a25_hat + learnRate_a25; 
@@ -79,22 +91,29 @@ for k = 1:1:20
     theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-    G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 3*abs(phi_ef-phi_e);
-    if(G>last_G)
+    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 3*abs(phi_ef-phi_e);
+    if(G_temp>G)
         % Down Search
         a25_hat = a25_hat - 2*learnRate_a25; 
         theta_1_dot = a15_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-        G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
         
-        if(G>last_G)
+        if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
+            a25_hat = a25_hat+learnRate_a25; 
             learnRate_a25 = learnRate_a25/2;
-            a25_hat = a25_hat+learnRate_a25;          
+        else
+            G = G_temp;
         end     
+    
+    else
+        G = G_temp;
     end
+
+    
     
             
     %调整a35_hat
@@ -104,25 +123,32 @@ for k = 1:1:20
     theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
     [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-    G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
-    if(G>last_G)
+    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+    
+
+    if(G_temp>G)
         % Down Search
         a35_hat = a35_hat - 2*learnRate_a35; 
         theta_1_dot = a15_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
-        G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
         
-        if(G>last_G)
+        if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
+            a35_hat = a35_hat+learnRate_a35;    
             learnRate_a35 = learnRate_a35/2;
-            a35_hat = a35_hat+learnRate_a35;          
-        end     
+        else
+            G = G_temp;
+        end
+    else
+        G = G_temp;
     end
-    
     k
     G
+    learnRate = [learnRate_a15,learnRate_a25,learnRate_a35]
+ 
     
     
     
