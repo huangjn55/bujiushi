@@ -23,8 +23,8 @@ a = (l1+l2*cos(q2))*temp1+l2*sin(q2)*temp2;
 b = (l1+l2*cos(q2))^2 + (l2*sin(q2))^2;
 q12_1 = acos(a/b);
 q12_2 = -q12_1;
-q12_1
-q12_2
+q12_1;
+q12_2;
 
 if abs(q12_1-(q_last(1)+q_last(2)))>=abs(q12_2-(q_last(1)+q_last(2)))
     q12 = q12_2;
