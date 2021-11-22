@@ -11,7 +11,7 @@ w_e_plan = out.w_e_plan.data*180/pi;
 %multibody
 v_exm = out.v_exm.data;
 v_eym = out.v_eym.data;
-w_em = out.w_em.data;
+w_em = out.w_em.data*180/pi;
 xem = out.x_em.data-1.738969362907555;
 yem = out.y_em.data-1.738969362907555;
 phi_em = out.theta_em.data*180/pi;

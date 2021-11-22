@@ -42,6 +42,10 @@ learnRate_a35 = 1;
 
 [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
 G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+error_pex = [];
+error_pey = [];
+error_phie = [];
+G_history = [];
 for k = 1:1:40
 
     %调整a15_hat
@@ -129,14 +133,41 @@ for k = 1:1:40
     end
     k
     G
-    
+    G_history(k) = G;
     learnRate = [learnRate_a15,learnRate_a25,learnRate_a35]
     error = [p_ef(1)-p_ex,p_ef(2)-p_ey,phi_ef-phi_e]
-    
+    error_pex(k) = error(1);
+    error_pey(k) = error(2);
+    error_phie(k) = error(3);
     
     
 end
 a_hat = [a15_hat,a25_hat,a35_hat]
+
+figure
+subplot(311)
+plot(1:1:40,error_pex);
+title('')
+xlabel('Iteration Number')
+ylabel('Error p_ex [m]')
+subplot(312)
+plot(1:1:40,error_pey);
+title('')
+xlabel('Iteration Number')
+ylabel('Error p_ey [m]')
+
+subplot(313)
+plot(1:1:40,error_pey*180/pi);
+title('')
+xlabel('Iteration Number')
+ylabel('Error phi_e [°]')
+
+figure
+plot(1:1:40,G_history);
+xlabel('Iteration Number')
+ylabel('Loss Function')
+
+
 function new_rate = updatelearnrate(rate,factor)
     new_rate = factor*rate;
 end
