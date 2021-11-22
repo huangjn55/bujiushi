@@ -45,7 +45,7 @@ theta_2_dot = a25_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
 theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
 [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
 G = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
-for k = 1:1:20
+for k = 1:1:40
 
     %调整a15_hat
     % Up Search
@@ -66,10 +66,10 @@ for k = 1:1:20
         theta_3_dot = a35_hat*(5*tau.^4 - 10*tau.^3 + 5*tau.^2)/tf;
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(t,theta_1_dot,theta_2_dot,theta_3_dot,theta_0_0,theta_1_0,theta_2_0,theta_3_0,time_step);
         G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) +5*abs(phi_ef-phi_e); 
-        if(G1>last_G)
+        if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
             a15_hat = a15_hat+learnRate_a15;  
-            learnRate_a15 = learnRate_a15/2;
+            learnRate_a15 = updatelearnrate(learnRate_a15,6/7);
 
         else
             %向下搜索有用
@@ -104,7 +104,7 @@ for k = 1:1:20
         if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
             a25_hat = a25_hat+learnRate_a25; 
-            learnRate_a25 = learnRate_a25/2;
+            learnRate_a25 = updatelearnrate(learnRate_a25,5/6);
         else
             G = G_temp;
         end     
@@ -138,7 +138,7 @@ for k = 1:1:20
         if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
             a35_hat = a35_hat+learnRate_a35;    
-            learnRate_a35 = learnRate_a35/2;
+            learnRate_a35 = updatelearnrate(learnRate_a35,4/5);
         else
             G = G_temp;
         end
@@ -147,9 +147,17 @@ for k = 1:1:20
     end
     k
     G
+    
     learnRate = [learnRate_a15,learnRate_a25,learnRate_a35]
- 
+    error = [p_ef(1)-p_ex,p_ef(2)-p_ey,phi_ef-phi_e]
     
     
     
 end
+a_hat = [a15_hat,a25_hat,a35_hat]
+function new_rate = updatelearnrate(rate,factor)
+    new_rate = factor*rate;
+end
+
+%4/5,3/4,2/3
+%5/6,4/5,3/4
