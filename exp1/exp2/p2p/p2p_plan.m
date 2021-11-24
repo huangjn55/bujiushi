@@ -46,14 +46,17 @@ error_pex = [];
 error_pey = [];
 error_phie = [];
 G_history = [];
-for k = 1:1:40
+
+round = 40;
+
+for k = 1:1:round
 
     %调整a15_hat
     % Up Search
     a15_hat = a15_hat + learnRate_a15; 
 
 [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+    G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2;
     while(flag)
         
     end
@@ -62,7 +65,7 @@ for k = 1:1:40
         a15_hat = a15_hat - 2*learnRate_a15; 
 
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) +5*abs(phi_ef-phi_e); 
+        G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2; 
         if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
             a15_hat = a15_hat+learnRate_a15;  
@@ -85,13 +88,13 @@ for k = 1:1:40
     % Up Search
     a25_hat = a25_hat + learnRate_a25; 
     [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 3*abs(phi_ef-phi_e);
+    G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2;
     if(G_temp>G)
         % Down Search
         a25_hat = a25_hat - 2*learnRate_a25; 
 
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+       G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2;
         
         if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
@@ -112,14 +115,14 @@ for k = 1:1:40
     % Up Search
     a35_hat = a35_hat + learnRate_a35; 
 	[r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-    G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+    G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2;
     
 
     if(G_temp>G)
         % Down Search
         a35_hat = a35_hat - 2*learnRate_a35; 
         [r_0x,r_0y,phi_0,p_ex,p_ey,phi_e] = calculation(a15_hat,a25_hat,a35_hat);
-        G_temp = abs(p_ex - p_ef(1)) + abs(p_ey-p_ef(2)) + 5*abs(phi_ef-phi_e);
+       G_temp = (abs(p_ex - p_ef(1)))^2 + (abs(p_ey-p_ef(2)))^2 + 5*(abs(phi_ef-phi_e))^2;
         
         if(G_temp>G)
             % 上下搜索都没用，恢复原来的参数，并减小步长
@@ -146,24 +149,24 @@ a_hat = [a15_hat,a25_hat,a35_hat]
 
 figure
 subplot(311)
-plot(1:1:40,error_pex);
+plot(1:1:round,error_pex);
 title('')
 xlabel('Iteration Number')
 ylabel('Error p_ex [m]')
 subplot(312)
-plot(1:1:40,error_pey);
+plot(1:1:round,error_pey);
 title('')
 xlabel('Iteration Number')
 ylabel('Error p_ey [m]')
 
 subplot(313)
-plot(1:1:40,error_pey*180/pi);
+plot(1:1:round,error_pey*180/pi);
 title('')
 xlabel('Iteration Number')
 ylabel('Error phi_e [°]')
 
 figure
-plot(1:1:40,G_history);
+plot(1:1:round,G_history);
 xlabel('Iteration Number')
 ylabel('Loss Function')
 
